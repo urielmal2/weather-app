@@ -1,0 +1,47 @@
+<div class="dashboard-main-container">
+  <form class="form-container" [formGroup]="weatherFormGroup">
+    <h3 class="form-title">Check Weather</h3>
+    <ng-container formArrayName="citesArray">
+      <ng-container *ngFor="let cityControl of citesArray.controls; index as i" [formGroupName]="i">
+        <div class="form-row-container">
+          <div class="form-field-container">
+            <mat-select formControlName="city">
+              <mat-option [value]="noValue">Select City</mat-option>
+              <mat-option *ngFor="let city of citiesList" [value]="city">
+                {{city}}
+              </mat-option>
+            </mat-select>
+          </div>
+
+          <div class="form-field-container">
+            <input type="text" formControlName="units" placeholder="Units(standard, metric, etc)">
+          </div>
+
+          <button mat-icon-button (click)="addCity()">
+            <mat-icon>add</mat-icon>
+          </button>
+          {{cityControl.valid | json}}
+          {{cityControl.valueChanges | async | json}}
+
+          <ng-container *ngIf="cityControl.valid">
+            {{cityReady.next({data: cityControl.value, index: i})}}
+          </ng-container>
+
+        </div>
+
+        <div class="weather" *ngIf="currentWeather[i]?.name">
+          <span>{{currentWeather[i]?.name}};&nbsp;{{currentWeather[i]?.main?.temp}}°</span>
+          <img src="http://openweathermap.org/img/w/{{currentWeather[i]?.weather[0].icon}}.png" alt="weather icon">
+        </div>
+      </ng-container>
+    </ng-container>
+  </form>
+
+  <div class="cites-weather-list-container">
+    <h3 class="weather-list-title">Weather in:</h3>
+
+    <ol>
+      <li *ngFor="let weather of currentWeather">{{weather?.name}}&nbsp;{{weather?.main?.temp}}°;&nbsp;&nbsp;{{weather?.weather[0]?.description}}</li>
+    </ol>
+  </div>
+</div>
